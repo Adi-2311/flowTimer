@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: #030305; color: #FFFFFF;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#030305">
+    <title>Study Stats & Leaderboard</title>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YH1R4BK2TP"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-YH1R4BK2TP');
+    </script>
+
+    <style>
+        /* Premium Typography */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap');
+
+        :root {
+            --bg-dark: #030305;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-hover: rgba(255, 255, 255, 0.04);
+            --text-main: #FFFFFF;
+            --text-muted: #6B6B70;
+            --accent-blue: #0A84FF;
+            --accent-orange: #FF9F0A;
+            --accent-red: #FF453A;
+            --gold: #FFD60A;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin: 0;
+            padding: 60px 20px 100px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Fixed Ambient Glow for scrolling pages */
+        .ambient-light {
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(10, 132, 255, 0.06) 0%, transparent 60%);
+            border-radius: 50%;
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .dashboard-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Header Area */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: slideUpFade 0.6s ease forwards;
+        }
+
+        h1 { margin: 0; font-size: 42px; font-weight: 200; letter-spacing: -2px; }
+        
+        .btn-back {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 99px;
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        .btn-back:hover { background-color: var(--glass-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
+
+        /* Modular Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            opacity: 0; 
+            animation: slideUpFade 0.6s ease forwards;
+        }
+
+        .card-header {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 15px;
+        }
+
+        /* Grid Layouts */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* Hero Metrics inside Cards */
+        .hero-metric {
+            font-size: 56px;
+            font-weight: 200;
+            letter-spacing: -3px;
+            margin: 10px 0 20px 0;
+            color: var(--accent-blue);
+            text-shadow: 0 0 30px rgba(10, 132, 255, 0.3);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .sub-metrics {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .sub-val { color: var(--text-main); font-weight: 500;}
+
+        /* Productivity Log Items */
+        .prod-item {
+            padding: 20px;
+            background: rgba(255,255,255,0.015);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .prod-item:last-child { margin-bottom: 0; }
+        .prod-item:hover { border-color: rgba(10, 132, 255, 0.3); background: rgba(255,255,255,0.03);}
+        .prod-time { font-size: 11px; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 8px;}
+        .prod-desc { font-size: 15px; font-weight: 300; line-height: 1.5; color: var(--text-main); font-style: italic;}
+
+        /* Elegant Tables */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 16px 10px; text-align: left; }
+        th { 
+            color: var(--text-muted); font-weight: 500; text-transform: uppercase; 
+            font-size: 11px; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border);
+        }
+        td {
+            font-size: 14px; font-weight: 300;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            font-variant-numeric: tabular-nums;
+        }
+        tbody tr:hover td { background-color: rgba(255, 255, 255, 0.015); }
+        tr:last-child td { border-bottom: none; }
+
+        /* Status & Styling Tags */
+        .rank-badge { font-weight: 600; color: var(--gold); text-shadow: 0 0 15px rgba(255, 214, 10, 0.3);} 
+        .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-weight: 300; font-style: italic; font-size: 14px;}
+        
+        .session-row td { 
+            background-color: rgba(255, 255, 255, 0.02); 
+            border-top: 1px solid var(--glass-border); 
+            font-weight: 500; padding: 20px 10px; color: #FFF;
+        }
+        .block-row td:first-child { padding-left: 30px; color: var(--text-muted); font-size: 12px; }
+        .text-work { color: var(--accent-blue); font-weight: 500; }
+        .text-rest { color: var(--accent-orange); font-weight: 500; }
+        .status-tag { 
+            font-size: 10px; color: var(--text-muted); font-weight: 500; margin-left: 8px; 
+            text-transform: uppercase; letter-spacing: 1px; padding: 3px 8px; border-radius: 8px; background: rgba(255,255,255,0.05);
+        }
+
+        /* Danger Button */
+        .btn-danger {
+            background-color: transparent; color: rgba(255, 69, 58, 0.6); border: 1px solid rgba(255, 69, 58, 0.2);
+            padding: 15px 35px; border-radius: 99px; font-weight: 500; font-size: 12px; cursor: pointer;
+            transition: all 0.3s ease; letter-spacing: 2px; text-transform: uppercase; margin-top: 20px;
+        }
+        .btn-danger:hover {
+            color: var(--text-main); border-color: var(--accent-red); background-color: var(--accent-red); box-shadow: 0 10px 30px rgba(255, 69, 58, 0.4); transform: translateY(-2px);
+        }
+
+        /* Animation Keyframes */
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .metrics-grid, .split-grid { grid-template-columns: 1fr; }
+            .glass-card { padding: 30px; border-radius: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-light"></div>
+
+    <div class="dashboard-wrapper">
+        
+        <div class="header">
+            <h1>Activity Report</h1>
+            <a href="index.html" class="btn-back">← Back to Dashboard</a>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="glass-card" style="animation-delay: 0.1s;">
+                <div class="card-header">Today</div>
+                <div class="hero-metric" id="hero-today">0h 0m</div>
+                <div class="sub-metrics">
+                    <span>Blocks: <span class="sub-val" id="blocks-today">0</span></span>
+                    <span>Avg Rate: <span class="sub-val" id="rate-today">--</span></span>
+                </div>
+            </div>
+
+            <div class="glass-card" style="animation-delay: 0.2s;">
+                <div class="card-header">Past 7 Days</div>
+                <div class="hero-metric" id="hero-week">0h 0m</div>
+                <div class="sub-metrics">
+                    <span>Blocks: <span class="sub-val" id="blocks-week">0</span></span>
+                    <span>Avg Rate: <span class="sub-val" id="rate-week">--</span></span>
+                </div>
+            </div>
+
+            <div class="glass-card" style="animation-delay: 0.3s;">
+                <div class="card-header">All-Time</div>
+                <div class="hero-metric" id="hero-all">0h 0m</div>
+                <div class="sub-metrics">
+                    <span>Blocks: <span class="sub-val" id="blocks-all">0</span></span>
+                    <span>Avg Rate: <span class="sub-val" id="rate-all">--</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="split-grid">
+            <div class="glass-card" style="animation-delay: 0.4s;">
+                <div class="card-header">Top 5 Deep Focus Blocks</div>
+                <table id="table-leaderboard">
+                    <thead><tr><th>Rank</th><th>Task</th><th>Time</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="glass-card" style="animation-delay: 0.5s;">
+                <div class="card-header">Recent Wins</div>
+                <div id="productivity-log-container">
+                    </div>
+            </div>
+        </div>
+
+        <div class="glass-card" style="animation-delay: 0.6s;">
+            <div class="card-header">Detailed Session Log</div>
+            <div style="overflow-x: auto;">
+                <table id="table-history">
+                    <thead><tr><th>Date & Time</th><th>Task / Status</th><th>Duration</th><th>Block Rating</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="text-align: center; animation: slideUpFade 0.6s ease forwards; animation-delay: 0.7s;">
+            <button class="btn-danger" onclick="wipeAllData()">Wipe All Data</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Data Fetching & Memory Cleanup ---
+        let sessions = JSON.parse(localStorage.getItem('studySessions')) || [];
+        
+        function optimizeStorageData() {
+            let storageUpdated = false;
+            let sessionsWithResults = sessions.filter(s => s.tangibleResults && s.tangibleResults !== "No specific results recorded.");
+            
+            if (sessionsWithResults.length > 3) {
+                sessionsWithResults.sort((a, b) => b.startTime - a.startTime);
+                for (let i = 3; i < sessionsWithResults.length; i++) {
+                    delete sessionsWithResults[i].tangibleResults;
+                    storageUpdated = true;
+                }
+            }
+            if (storageUpdated) localStorage.setItem('studySessions', JSON.stringify(sessions));
+        }
+        optimizeStorageData();
+
+        // --- Formatting Helpers ---
+        function formatHeroTime(totalSeconds) {
+            if (isNaN(totalSeconds) || totalSeconds === 0) return "0h 0m";
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            if (h > 0) return `${h}h ${m}m`;
+            return `${m}m`;
+        }
+
+        function formatTableTime(totalSeconds) {
+            if (isNaN(totalSeconds) || totalSeconds === 0) return "---";
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = Math.floor(totalSeconds % 60);
+            if (h > 0) return `${h}h ${m}m`;
+            return `${m}m ${s}s`;
+        }
+
+        function getMean(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+
+        // --- Data Parsing for Hero Cards ---
+        const now = new Date();
+        const stats = {
+            today: { time: 0, blocks: 0, ratings: [] },
+            week: { time: 0, blocks: 0, ratings: [] },
+            all: { time: 0, blocks: 0, ratings: [] }
+        };
+
+        const allFocusBlocks = []; // For leaderboard
+
+        sessions.forEach(session => {
+            if (!session.blocks) return;
+
+            session.blocks.forEach(block => {
+                if (!block.durationSec || block.durationSec <= 0 || block.type !== "FOCUS") return;
+
+                const blockDate = new Date(block.startTime);
+                const daysOld = (now - blockDate) / (1000 * 60 * 60 * 24);
+                const isToday = blockDate.toDateString() === now.toDateString();
+                
+                allFocusBlocks.push(block);
+
+                // All-Time
+                stats.all.time += block.durationSec;
+                stats.all.blocks += 1;
+                if (block.rating != null) stats.all.ratings.push(block.rating);
+
+                // Week
+                if (daysOld <= 7) {
+                    stats.week.time += block.durationSec;
+                    stats.week.blocks += 1;
+                    if (block.rating != null) stats.week.ratings.push(block.rating);
+                }
+
+                // Today
+                if (isToday) {
+                    stats.today.time += block.durationSec;
+                    stats.today.blocks += 1;
+                    if (block.rating != null) stats.today.ratings.push(block.rating);
+                }
+            });
+        });
+
+        // --- Populate Hero Cards ---
+        document.getElementById('hero-today').innerText = formatHeroTime(stats.today.time);
+        document.getElementById('blocks-today').innerText = stats.today.blocks;
+        document.getElementById('rate-today').innerText = stats.today.ratings.length ? getMean(stats.today.ratings).toFixed(1) : "--";
+
+        document.getElementById('hero-week').innerText = formatHeroTime(stats.week.time);
+        document.getElementById('blocks-week').innerText = stats.week.blocks;
+        document.getElementById('rate-week').innerText = stats.week.ratings.length ? getMean(stats.week.ratings).toFixed(1) : "--";
+
+        document.getElementById('hero-all').innerText = formatHeroTime(stats.all.time);
+        document.getElementById('blocks-all').innerText = stats.all.blocks;
+        document.getElementById('rate-all').innerText = stats.all.ratings.length ? getMean(stats.all.ratings).toFixed(1) : "--";
+
+        // --- Populate Leaderboard ---
+        const leaderboardBody = document.querySelector("#table-leaderboard tbody");
+        const sortedFocus = [...allFocusBlocks].sort((a, b) => b.durationSec - a.durationSec);
+        const ranks = ["1ST", "2ND", "3RD", "4TH", "5TH"];
+        
+        for (let i = 0; i < 5; i++) {
+            const row = document.createElement("tr");
+            if (i < sortedFocus.length) {
+                const b = sortedFocus[i];
+                const taskName = b.taskName ? b.taskName : "Deep Work";
+                row.innerHTML = `<td class="rank-badge">${ranks[i]}</td><td style="color:var(--text-main); font-weight:400;">${taskName}</td><td>${formatTableTime(b.durationSec)}</td>`;
+            } else {
+                row.innerHTML = `<td><span style="color:var(--text-muted); font-weight:300;">${ranks[i]}</span></td><td>---</td><td>---</td>`;
+            }
+            leaderboardBody.appendChild(row);
+        }
+
+        // --- Populate Productivity Log ---
+        const prodLogContainer = document.getElementById("productivity-log-container");
+        let validProdSessions = sessions.filter(s => s.tangibleResults && s.tangibleResults !== "No specific results recorded.");
+        validProdSessions.sort((a, b) => b.startTime - a.startTime); 
+        const top3Prod = validProdSessions.slice(0, 3);
+
+        if (top3Prod.length === 0) {
+            prodLogContainer.innerHTML = `<div class="empty-state">No debriefs logged yet. Finish a session to see your results here.</div>`;
+        } else {
+            top3Prod.forEach(session => {
+                let focusSeconds = 0;
+                if (session.blocks) {
+                    session.blocks.forEach(b => { if (b.type === "FOCUS" && b.durationSec) focusSeconds += b.durationSec; });
+                }
+                const timeStr = formatHeroTime(focusSeconds);
+                const dateStr = new Date(session.startTime).toLocaleDateString([], { month: 'short', day: 'numeric' });
+
+                const item = document.createElement('div');
+                item.className = "prod-item";
+                item.innerHTML = `
+                    <div class="prod-time">${timeStr} Focus • ${dateStr}</div>
+                    <div class="prod-desc">"${session.tangibleResults}"</div>
+                `;
+                prodLogContainer.appendChild(item);
+            });
+        }
+
+        // --- Populate History Table ---
+        const historyBody = document.querySelector("#table-history tbody");
+        if (sessions.length === 0) {
+            historyBody.innerHTML = `<tr><td colspan="4" class="empty-state">No history recorded yet. Time to get to work!</td></tr>`;
+        } else {
+            const reversedSessions = [...sessions].reverse();
+            reversedSessions.forEach(session => {
+                
+                const sRow = document.createElement("tr");
+                sRow.className = "session-row";
+                const sessionStart = new Date(session.startTime).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+                const totalDur = formatTableTime(session.totalDurationSec || 0);
+                
+                let sessionGoalDisplay = session.sessionGoal ? `<span style="color:var(--text-muted); font-weight:400;"> • ${session.sessionGoal}</span>` : "";
+                
+                // Show a tiny snippet of the debrief text if it exists
+                let debriefSnippet = "";
+                if (session.tangibleResults && session.tangibleResults !== "No specific results recorded.") {
+                    debriefSnippet = `<br><span style="font-size: 11px; color: var(--text-muted); font-weight: 400; font-style: italic;">"${session.tangibleResults}"</span>`;
+                }
+
+                const sessionStatus = session.status !== "COMPLETED" ? `<span class="status-tag">${session.status}</span>` : "";
+                
+                sRow.innerHTML = `
+                    <td colspan="2" style="letter-spacing: 0.5px;">📁 ${sessionStart} ${sessionGoalDisplay} ${sessionStatus} ${debriefSnippet}</td>
+                    <td>${totalDur} Total</td>
+                    <td></td>
+                `;
+                historyBody.appendChild(sRow);
+
+                if (session.blocks && session.blocks.length > 0) {
+                    session.blocks.forEach(block => {
+                        const bRow = document.createElement("tr");
+                        bRow.className = "block-row";
+                        const typeClass = block.type === "FOCUS" ? "text-work" : "text-rest";
+                        const displayName = block.type === "FOCUS" ? (block.taskName || "Deep Work") : "Break";
+                        const rating = block.rating != null ? `<span style="color: var(--text-main); font-weight: 500;">${block.rating}</span><span style="color:var(--text-muted);">/10</span>` : "---";
+                        const blockTime = new Date(block.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        const blockStatus = block.status !== "COMPLETED" ? `<span class="status-tag">${block.status}</span>` : "";
+
+                        bRow.innerHTML = `
+                            <td>↳ ${blockTime}</td>
+                            <td><span class="${typeClass}">${displayName}</span> ${blockStatus}</td>
+                            <td>${formatTableTime(block.durationSec || 0)}</td>
+                            <td>${rating}</td>
+                        `;
+                        historyBody.appendChild(bRow);
+                    });
+                }
+            });
+        }
+
+        // --- Wipe All Data Function ---
+        function wipeAllData() {
+            const userConfirmed = confirm("⚠️ Are you completely sure? This will permanently delete all of your session history, stats, and productivity logs. This action cannot be undone.");
+            if (userConfirmed) {
+                localStorage.removeItem('studySessions');
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
