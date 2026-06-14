@@ -1,766 +1,191 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color: #030305; color: #FFFFFF;">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#030305">
-    <title>Focus & Rest</title>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YH1R4BK2TP"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-YH1R4BK2TP');
-    </script>
-
+    <title>Math Question Randomizer</title>
     <style>
-        /* Premium Typography */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap');
-
-        :root {
-            --bg-dark: #030305;
-            --glass-bg: rgba(255, 255, 255, 0.02);
-            --glass-border: rgba(255, 255, 255, 0.06);
-            --text-main: #FFFFFF;
-            --text-muted: #6B6B70;
-            --accent-blue: #0A84FF;
-            --accent-orange: #FF9F0A;
-            --accent-red: #FF453A;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            line-height: 1.6;
+        }
+        .card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        h1, h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .input-group {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            user-select: none;
-            overflow: hidden;
+            gap: 10px;
+            margin-bottom: 1rem;
         }
-
-        /* Animated Ambient Background */
-        .ambient-light {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(10, 132, 255, 0.15) 0%, transparent 60%);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-            animation: breathe 8s infinite alternate ease-in-out;
-            pointer-events: none;
-            transition: background 1s ease;
+        .input-group input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
-
-        @keyframes breathe {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
-            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-        }
-
-        /* Frosted Glass App Card */
-        .app-container {
-            width: 440px;
-            text-align: center;
-            padding: 50px 40px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 48px;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            position: relative;
-            opacity: 0;
-            animation: slideUpFade 0.6s ease forwards;
-        }
-
-        /* Subtle Settings Icon */
-        .settings-icon {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            color: var(--text-muted);
-            font-size: 18px;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: all 0.3s ease;
-            display: none; /* Hidden until break */
-        }
-        .settings-icon:hover { opacity: 1; transform: rotate(45deg); color: var(--text-main);}
-
-        /* Ultra-Sleek Typography */
-        .mode-label { 
-            font-size: 12px; 
-            font-weight: 600; 
-            letter-spacing: 3px; 
-            color: var(--text-muted); 
-            margin-bottom: 25px; 
-            transition: opacity 0.4s ease, transform 0.4s ease, color 0.4s ease;
-            text-transform: uppercase;
-            min-height: 15px;
-        }
-        
-        /* The main display area */
-        .display-container {
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .main-display { 
-            font-size: 110px; 
-            font-weight: 200; 
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -4px;
-            transition: opacity 0.4s ease, transform 0.4s ease, color 0.4s ease, text-shadow 0.4s ease;
-            line-height: 1;
-            width: 100%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .text-task {
-            font-size: 36px !important;
-            font-weight: 300 !important;
-            letter-spacing: -1px !important;
-            line-height: 1.3 !important;
-            word-wrap: break-word;
-            padding: 0 10px;
-        }
-
-        /* The Void Text Inputs */
-        .task-input {
-            width: 100%;
-            background: transparent;
+        button {
+            background-color: #3498db;
+            color: white;
             border: none;
-            color: var(--text-main);
-            font-size: 22px;
-            font-weight: 300;
-            text-align: center;
-            font-family: inherit;
-            outline: none;
-            padding: 15px 0;
-            transition: all 0.4s ease;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-        }
-        
-        .task-input::placeholder {
-            color: rgba(107, 107, 112, 0.4);
-            font-weight: 200;
-            transition: color 0.3s ease;
-        }
-        
-        .task-input:focus::placeholder { color: rgba(107, 107, 112, 0.1); }
-
-        /* The magical glowing underline that appears when typing */
-        .input-glow-line {
-            position: absolute;
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0%;
-            height: 1px;
-            background: var(--accent-blue);
-            box-shadow: 0 0 15px var(--accent-blue);
-            transition: width 0.4s ease, opacity 0.4s ease;
-            opacity: 0;
-        }
-        .task-input:focus ~ .input-glow-line { width: 60%; opacity: 1; }
-
-        /* Next Task / Edit Button */
-        .edit-task-btn {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 10px;
+            padding: 10px 15px;
+            border-radius: 4px;
             cursor: pointer;
-            opacity: 0.4;
-            transition: all 0.3s ease;
-            padding: 6px 16px;
-            border-radius: 12px;
-            border: 1px solid transparent;
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .btn-success {
+            background-color: #2ecc71;
+        }
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        #entry-list {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        #active-question-area {
+            text-align: center;
             display: none;
         }
-        .edit-task-btn:hover {
-            opacity: 1; color: var(--text-main); border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.05);
+        #current-question-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background-color: #e8f4f8;
+            border-radius: 8px;
+            border: 2px solid #3498db;
         }
-
-        /* Minimalist Progress Bar */
-        .progress-wrapper {
-            opacity: 0; /* Hidden by default */
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-            margin-top: 20px;
-            margin-bottom: 30px;
+        .status {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 1rem;
         }
-        .progress-bg { background-color: rgba(255,255,255,0.05); height: 2px; border-radius: 2px; overflow: hidden; width: 80%; margin: 0 auto;}
-        .progress-fill { height: 100%; width: 0%; background-color: var(--text-muted); transition: width 0.1s linear, background-color 0.4s ease, box-shadow 0.4s ease; }
-        .indeterminate { animation: pulse 0.5s infinite alternate ease-in-out; }
-        @keyframes pulse { 0% { opacity: 0.1; } 100% { opacity: 1; } }
-
-        /* Settings Panel (Hidden by default) */
-        .settings-panel {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            margin-bottom: 30px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid var(--glass-border);
-        }
-        .ratio-label { color: var(--text-muted); font-size: 12px; font-weight: 500; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase;}
-        input[type="range"] { -webkit-appearance: none; width: 100%; background: rgba(255, 255, 255, 0.05); height: 4px; border-radius: 2px; outline: none;}
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #FFF; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5); transition: transform 0.2s;}
-        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-        /* Elegant Pill Buttons */
-        .btn-action { 
-            border: none; border-radius: 99px; font-size: 15px; font-weight: 500; padding: 18px 30px; 
-            cursor: pointer; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); font-family: inherit; letter-spacing: 0.5px;
-            display: none; /* Hidden in the Void state */
-            opacity: 0;
-            margin: 0 auto 20px auto;
-        }
-        
-        .btn-rest { background-color: transparent; color: var(--text-main); border: 1px solid var(--glass-border); width: 80%;}
-        .btn-rest:hover { background-color: rgba(255, 255, 255, 0.05); transform: translateY(-2px); border-color: rgba(255,255,255,0.1);}
-        
-        .btn-work { background-color: var(--accent-blue); color: white; box-shadow: 0 10px 30px rgba(10, 132, 255, 0.3); width: 80%;}
-        .btn-work:hover { background-color: #007AFF; transform: translateY(-2px); box-shadow: 0 15px 35px rgba(10, 132, 255, 0.5); }
-        
-        .btn-end { background-color: transparent; color: var(--accent-red); width: auto; margin: 0 auto; display: none; font-size: 12px; font-weight: 500; padding: 10px 20px; opacity: 0; transition: all 0.3s ease; border-radius: 12px;}
-        .btn-end:hover { background-color: rgba(255, 69, 58, 0.1); }
-
-        .stats-link { color: var(--text-muted); text-decoration: none; font-size: 11px; font-weight: 500; display: inline-block; transition: color 0.2s; margin-top: 30px; text-transform: uppercase; letter-spacing: 1px; opacity: 0; animation: fadeIn 1s ease forwards 1s;}
-        .stats-link:hover { color: var(--text-main); }
-
-        /* Premium Modals */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); animation: fadeIn 0.4s ease; }
-        .modal { background: #0A0A0C; padding: 40px 30px; border-radius: 40px; width: 340px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05);}
-        .modal h3 { margin: 0 0 5px 0; font-size: 18px; font-weight: 500; color: var(--text-main); }
-        
-        .result-input {
-            width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 16px;
-            color: var(--text-main); font-size: 15px; font-weight: 300; font-family: inherit; outline: none; padding: 15px;
-            transition: all 0.3s; margin-top: 20px; margin-bottom: 30px; resize: none; box-sizing: border-box; text-align: left; line-height: 1.5;
-        }
-        .result-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 20px rgba(10, 132, 255, 0.2); background: rgba(255, 255, 255, 0.05); }
-        .result-input::placeholder { color: rgba(107, 107, 112, 0.5); }
-
-        .rating-val { font-size: 64px; font-weight: 200; color: var(--text-main); margin: 10px 0 20px 0; letter-spacing: -3px; }
-        .modal-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-top: -10px; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px;}
-        
-        .modal .btn-submit { background-color: var(--text-main); color: var(--bg-dark); font-weight: 600; border: none; border-radius: 20px; padding: 15px 30px; width: 100%; cursor: pointer; transition: all 0.3s; font-family: inherit;}
-        .modal .btn-submit:hover { background-color: #FFF; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2);}
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Dynamic Color States */
-        .text-work { color: var(--accent-blue) !important; text-shadow: 0 0 40px rgba(10, 132, 255, 0.4); }
-        .text-rest { color: var(--accent-orange) !important; text-shadow: 0 0 40px rgba(255, 159, 10, 0.4); }
-        .text-end { color: var(--accent-red) !important; text-shadow: 0 0 40px rgba(255, 69, 58, 0.4); }
-        .bg-work { background-color: var(--accent-blue) !important; box-shadow: 0 0 30px rgba(10, 132, 255, 0.6); }
-        .bg-rest { background-color: var(--accent-orange) !important; box-shadow: 0 0 30px rgba(255, 159, 10, 0.6); }
     </style>
 </head>
 <body>
 
-    <div class="ambient-light" id="ambientLight"></div>
-
-    <div class="app-container">
+    <div class="card">
+        <h1>Math Randomizer</h1>
+        <p>Add the chapters you want to practice. The app will generate a pool of questions and draw them randomly.</p>
         
-        <div class="settings-icon" id="settingsBtn" onclick="toggleSettings()">⚙️</div>
+        <div class="input-group">
+            <input type="number" id="unit" placeholder="Unit #" min="1">
+            <input type="number" id="chapter" placeholder="Chapter #" min="1">
+            <input type="number" id="numQuestions" placeholder="Total Questions" min="1">
+        </div>
+        <button onclick="addEntry()">Add Entry</button>
 
-        <div class="mode-label" id="modeLabel"></div>
-        
-        <div class="display-container">
-            <input type="text" id="taskInput" class="task-input" placeholder="What problem are we solving?" maxlength="40" autocomplete="off" onkeydown="handleEnterKey(event)">
-            <div class="input-glow-line" id="inputGlow"></div>
-            
-            <div class="main-display" id="mainDisplay">00:00</div>
-            <div id="editTaskBtn" class="edit-task-btn" onclick="openTaskEditor()">Next Step ↵</div>
-        </div>
+        <div id="entry-list"></div>
+        <p>Total questions in pool: <span id="pool-count">0</span></p>
 
-        <div class="settings-panel" id="settingsPanel">
-            <div class="ratio-label" id="ratioText">Earned Rest Ratio: 20%</div>
-            <input type="range" id="ratioSlider" min="1" max="35" value="20" oninput="updateRatioText()">
-        </div>
-        
-        <div class="progress-wrapper" id="progressWrapper">
-            <div class="progress-bg"><div class="progress-fill" id="progressBar"></div></div>
-        </div>
-
-        <button class="btn-action btn-rest" id="restBtn" onclick="initiateRest()">Take a Break</button>
-        <button class="btn-action btn-work" id="startBtn" onclick="startNewFocusBlock(true)">Resume Focus</button>
-        <button class="btn-end" id="endBtn" onclick="endSession()">End Session</button>
-        
-        <div>
-            <a href="stats.html" class="stats-link" id="statsLink">View Stats & History</a>
-        </div>
-    </div> 
-
-    <div class="modal-overlay" id="ratingModal">
-        <div class="modal">
-            <h3>How productive was this block?</h3>
-            <div class="rating-val" id="modalRatingVal">5</div>
-            <input type="range" id="modalSlider" min="0" max="10" value="5" oninput="updateModalVal()">
-            <div class="modal-labels">
-                <span>0 - Unfocused</span>
-                <span>10 - Flow State</span>
-            </div>
-            <button class="btn-submit" onclick="submitRatingAndRest()">Start Break</button>
-        </div>
+        <button id="start-btn" onclick="startRandomizer()" disabled>Start Practice</button>
     </div>
 
-    <div class="modal-overlay" id="sessionRatingModal">
-        <div class="modal">
-            <h3>Session Complete</h3>
-            <p style="color: var(--text-muted); font-size: 13px; margin: 5px 0 0 0;">What tangible results did you achieve?</p>
-            <textarea id="sessionResultInput" class="result-input" placeholder="e.g., Finished the backend API logic and drafted the final email..." rows="3"></textarea>
-            <button class="btn-submit" onclick="submitSessionRating()">Save Session</button>
-        </div>
+    <div class="card" id="active-question-area">
+        <h2>Current Question</h2>
+        <div id="current-question-display">Waiting to start...</div>
+        <button id="done-btn" class="btn-success" onclick="markDone()">Done! Next Question</button>
     </div>
 
     <script>
-        // --- State Variables ---
-        let timerState = "IDLE"; 
-        let currentStartTime = 0;
-        let pendingWorkSec = 0;
-        let plannedBreakSec = 0;
-        let clockInterval;
-        let alertShown = false;
-        
-        let sessionGoalText = "";
-        let activeTaskText = ""; 
-        let isAwaitingTask = false;
-        let taskPromptTimeout = null;
+        // Array to hold every single individual question
+        let questionPool = [];
 
-        let currentSession = null;
-        let currentBlock = null;
+        function addEntry() {
+            const unit = document.getElementById('unit').value;
+            const chapter = document.getElementById('chapter').value;
+            const numQuestions = parseInt(document.getElementById('numQuestions').value);
 
-        // UI Elements
-        const modeLabel = document.getElementById("modeLabel");
-        const mainDisplay = document.getElementById("mainDisplay");
-        const editTaskBtn = document.getElementById("editTaskBtn");
-        const taskInput = document.getElementById("taskInput");
-        const inputGlow = document.getElementById("inputGlow");
-        const progressWrapper = document.getElementById("progressWrapper");
-        const progressBar = document.getElementById("progressBar");
-        
-        const startBtn = document.getElementById("startBtn");
-        const restBtn = document.getElementById("restBtn");
-        const endBtn = document.getElementById("endBtn");
-        const statsLink = document.getElementById("statsLink");
-        
-        const settingsBtn = document.getElementById("settingsBtn");
-        const settingsPanel = document.getElementById("settingsPanel");
-        const ratioSlider = document.getElementById("ratioSlider");
-        const ratioText = document.getElementById("ratioText");
-        const ambientLight = document.getElementById("ambientLight");
-
-        const chime = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-
-        // Focus the input immediately when the page loads
-        window.onload = () => { taskInput.focus(); }
-
-        function updateRatioText() { ratioText.innerText = `Earned Rest Ratio: ${ratioSlider.value}%`; }
-
-        function toggleSettings() {
-            if (settingsPanel.style.display === "block") {
-                settingsPanel.style.opacity = "0";
-                setTimeout(() => { settingsPanel.style.display = "none"; }, 300);
-            } else {
-                settingsPanel.style.display = "block";
-                setTimeout(() => { settingsPanel.style.opacity = "1"; }, 10);
-            }
-        }
-
-        function formatTime(totalSeconds) {
-            const h = Math.floor(totalSeconds / 3600);
-            const m = Math.floor((totalSeconds % 3600) / 60);
-            const s = Math.floor(totalSeconds % 60);
-            if (h > 0) return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        }
-
-        function saveSessionToHistory() {
-            if (!currentSession) return;
-            currentSession.endTime = Date.now();
-            currentSession.totalDurationSec = parseFloat(((currentSession.endTime - currentSession.startTime) / 1000).toFixed(2));
-            
-            let sessions = JSON.parse(localStorage.getItem("studySessions")) || [];
-            sessions.push(currentSession);
-            localStorage.setItem("studySessions", JSON.stringify(sessions));
-            
-            currentSession = null;
-            currentBlock = null;
-        }
-
-        function handleEnterKey(event) {
-            if (event.key === "Enter") {
-                if (timerState === "IDLE") {
-                    initiateNewSession();
-                } else if (timerState === "WORK" && isAwaitingTask) {
-                    lockInNewTask(taskInput.value.trim());
-                }
-            }
-        }
-
-        function openTaskEditor() {
-            mainDisplay.style.opacity = "0";
-            mainDisplay.style.transform = "translate(-50%, -50%) scale(0.95)";
-            editTaskBtn.style.display = "none";
-            
-            setTimeout(() => {
-                taskInput.style.display = "block";
-                inputGlow.style.display = "block";
-                void taskInput.offsetWidth;
-                taskInput.style.opacity = "1";
-                taskInput.style.transform = "translate(-50%, -50%)";
-                taskInput.value = "";
-                taskInput.placeholder = "What is the next step?";
-                taskInput.focus();
-                isAwaitingTask = true;
-            }, 400); 
-        }
-
-        function lockInNewTask(text) {
-            const newTaskText = text || "Deep Focus";
-            activeTaskText = newTaskText;
-            isAwaitingTask = false;
-            
-            if (taskPromptTimeout) clearTimeout(taskPromptTimeout);
-
-            if (currentBlock) {
-                if (currentBlock.taskName === "Deep Focus" || !currentBlock.taskName) {
-                    currentBlock.taskName = newTaskText;
-                } else if (!currentBlock.taskName.includes(newTaskText)) {
-                    currentBlock.taskName += ` → ${newTaskText}`;
-                }
+            if (!unit || !chapter || isNaN(numQuestions) || numQuestions < 1) {
+                alert("Please fill out all fields with valid numbers.");
+                return;
             }
 
-            taskInput.style.opacity = "0";
-            taskInput.style.transform = "translate(-50%, -60%)";
-
-            setTimeout(() => {
-                taskInput.style.display = "none";
-                inputGlow.style.display = "none";
-                
-                mainDisplay.className = "main-display text-work text-task";
-                mainDisplay.innerText = activeTaskText;
-                document.title = `🛠 ${activeTaskText}`;
-
-                editTaskBtn.style.display = "block"; 
-                mainDisplay.style.opacity = "1";
-                mainDisplay.style.transform = "translate(-50%, -50%) scale(1)";
-            }, 400);
-        }
-
-        // STEP 1: The Void -> Starting a session
-        function initiateNewSession() {
-            sessionGoalText = taskInput.value.trim() || "Deep Work Session";
-            activeTaskText = ""; 
-            
-            // Slide the goal up to the top
-            modeLabel.innerText = sessionGoalText;
-            modeLabel.style.opacity = "0";
-            modeLabel.style.transform = "translateY(20px)";
-            
-            setTimeout(() => {
-                modeLabel.style.opacity = "1";
-                modeLabel.style.transform = "translateY(0)";
-            }, 50);
-
-            const now = Date.now();
-            currentSession = {
-                sessionId: now, startTime: now, date: new Date().toLocaleDateString(),
-                blocks: [], status: "COMPLETED", sessionGoal: sessionGoalText
-            };
-            
-            // Hide the stats link to clear the screen
-            statsLink.style.display = "none";
-
-            startNewFocusBlock(false); 
-        }
-
-        // STEP 2: The Flow State
-        function startNewFocusBlock(returningFromBreak = false) {
-            const now = Date.now();
-
-            if (timerState === "BREAK" && currentBlock) {
-                currentBlock.endTime = now;
-                currentBlock.durationSec = parseFloat(((now - currentBlock.startTime) / 1000).toFixed(2));
-                currentBlock.status = "COMPLETED";
-                currentSession.blocks.push(currentBlock);
+            // Generate individual questions and add to the pool
+            for (let i = 1; i <= numQuestions; i++) {
+                questionPool.push({
+                    unit: unit,
+                    chapter: chapter,
+                    questionNumber: i
+                });
             }
 
-            currentBlock = {
-                blockId: now, type: "FOCUS", taskName: returningFromBreak ? activeTaskText : "Deep Focus",
-                startTime: now, status: "ACTIVE"
-            };
-
-            timerState = "WORK";
-            currentStartTime = now;
+            // Update UI
+            const entryList = document.getElementById('entry-list');
+            entryList.innerHTML += `Added Unit ${unit}, Chapter ${chapter} (${numQuestions} questions)<br>`;
             
-            // Hide Break controls, Show Work controls
-            startBtn.style.display = "none";
-            startBtn.style.opacity = "0";
-            settingsBtn.style.display = "none";
-            settingsPanel.style.display = "none";
-            
-            restBtn.style.display = "block";
-            endBtn.style.display = "inline-block";
-            setTimeout(() => { 
-                restBtn.style.opacity = "1"; 
-                endBtn.style.opacity = "0.7"; 
-            }, 50);
-            
-            if (!returningFromBreak) {
-                taskInput.style.opacity = "0";
-                taskInput.style.transform = "translate(-50%, -60%)";
-                
-                setTimeout(() => {
-                    taskInput.value = "";
-                    taskInput.placeholder = "What is the immediate next step?";
-                    taskInput.style.transform = "translate(-50%, -40%)";
-                    
-                    void taskInput.offsetWidth;
-                    taskInput.style.opacity = "1";
-                    taskInput.style.transform = "translate(-50%, -50%)";
-                    taskInput.focus();
-                    isAwaitingTask = true;
+            updatePoolCount();
 
-                    if (taskPromptTimeout) clearTimeout(taskPromptTimeout);
-                    taskPromptTimeout = setTimeout(() => {
-                        if (isAwaitingTask) lockInNewTask(taskInput.value.trim()); 
-                    }, 60000);
-                }, 400);
-            } else {
-                mainDisplay.style.opacity = "0";
-                mainDisplay.style.transform = "translate(-50%, -50%) scale(0.95)";
+            // Clear inputs for the next entry
+            document.getElementById('unit').value = '';
+            document.getElementById('chapter').value = '';
+            document.getElementById('numQuestions').value = '';
 
-                setTimeout(() => {
-                    taskInput.style.display = "none";
-                    inputGlow.style.display = "none";
-                    editTaskBtn.style.display = "block"; 
-                    
-                    mainDisplay.className = "main-display text-work text-task";
-                    mainDisplay.innerText = activeTaskText;
-                    isAwaitingTask = false;
-
-                    void mainDisplay.offsetWidth;
-                    mainDisplay.style.opacity = "1";
-                    mainDisplay.style.transform = "translate(-50%, -50%) scale(1)";
-                }, 400);
-            }
-            
-            modeLabel.innerText = sessionGoalText;
-            ambientLight.style.background = "radial-gradient(circle, rgba(10, 132, 255, 0.15) 0%, transparent 60%)";
-            
-            // Show the minimalist pulsing bar
-            progressWrapper.style.opacity = "1";
-            progressBar.style.width = "100%";
-            progressBar.className = "progress-fill bg-work indeterminate";
-
-            startClock();
+            // Enable start button
+            document.getElementById('start-btn').disabled = false;
         }
 
-        // STEP 3: Break Rating
-        function initiateRest() {
-            if (timerState !== "WORK") return;
-            pendingWorkSec = (Date.now() - currentStartTime) / 1000;
-            timerState = "RATING";
-            stopClock();
-            document.getElementById("modalSlider").value = 5;
-            document.getElementById("modalRatingVal").innerText = "5";
-            document.getElementById("ratingModal").style.display = "flex";
+        function updatePoolCount() {
+            document.getElementById('pool-count').innerText = questionPool.length;
         }
-        function updateModalVal() { document.getElementById("modalRatingVal").innerText = document.getElementById("modalSlider").value; }
 
-        // STEP 4: The Break UI (Numbers Revealed!)
-        function submitRatingAndRest() {
-            const rating = parseInt(document.getElementById("modalSlider").value);
-            document.getElementById("ratingModal").style.display = "none";
-            const now = Date.now();
+        function startRandomizer() {
+            if (questionPool.length === 0) return;
 
-            if (currentBlock && currentBlock.type === "FOCUS") {
-                currentBlock.endTime = now; currentBlock.durationSec = parseFloat(pendingWorkSec.toFixed(2));
-                currentBlock.rating = rating; currentBlock.status = "COMPLETED";
-                currentSession.blocks.push(currentBlock);
+            // Hide the setup button, show the active area
+            document.getElementById('start-btn').style.display = 'none';
+            document.getElementById('active-question-area').style.display = 'block';
+            
+            drawNextQuestion();
+        }
+
+        function drawNextQuestion() {
+            if (questionPool.length === 0) {
+                document.getElementById('current-question-display').innerText = "🎉 All questions completed! Great job!";
+                document.getElementById('current-question-display').style.borderColor = "#2ecc71";
+                document.getElementById('current-question-display').style.backgroundColor = "#eafaf1";
+                document.getElementById('done-btn').style.display = 'none';
+                return;
             }
 
-            const ratio = parseInt(ratioSlider.value) / 100;
-            const calcBreak = pendingWorkSec * ratio;
-            plannedBreakSec = Math.max(calcBreak, 60.0);
-
-            currentBlock = { blockId: now + 1, type: "BREAK", startTime: now, plannedSec: parseFloat(plannedBreakSec.toFixed(2)), status: "ACTIVE" };
-            timerState = "BREAK"; currentStartTime = now; alertShown = false;
-
-            if (taskPromptTimeout) clearTimeout(taskPromptTimeout);
-            isAwaitingTask = false;
+            // Pick a random index
+            const randomIndex = Math.floor(Math.random() * questionPool.length);
             
-            // Swap Buttons & Show Settings Icon
-            restBtn.style.opacity = "0";
-            setTimeout(() => {
-                restBtn.style.display = "none";
-                startBtn.style.display = "block";
-                settingsBtn.style.display = "block";
-                setTimeout(() => { startBtn.style.opacity = "1"; }, 50);
-            }, 400);
+            // Extract the question from the pool (removes it so it isn't asked again)
+            const selectedQuestion = questionPool.splice(randomIndex, 1)[0];
             
-            // Fade text out
-            mainDisplay.style.opacity = "0";
-            mainDisplay.style.transform = "translate(-50%, -50%) scale(0.95)";
-            if (taskInput.style.display !== "none") { taskInput.style.opacity = "0"; }
-
-            // Fade numbers in
-            setTimeout(() => {
-                taskInput.style.display = "none";
-                inputGlow.style.display = "none";
-                editTaskBtn.style.display = "none"; 
-                mainDisplay.className = "main-display text-rest";
-                mainDisplay.innerText = "00:00";
-
-                void mainDisplay.offsetWidth;
-                mainDisplay.style.opacity = "1";
-                mainDisplay.style.transform = "translate(-50%, -50%) scale(1)";
-            }, 400);
-
-            modeLabel.innerText = "RESTING • " + sessionGoalText;
-            ambientLight.style.background = "radial-gradient(circle, rgba(255, 159, 10, 0.15) 0%, transparent 60%)";
+            // Display it
+            document.getElementById('current-question-display').innerText = 
+                `Unit ${selectedQuestion.unit} | Chapter ${selectedQuestion.chapter} | Question #${selectedQuestion.questionNumber}`;
             
-            // Switch bar from pulsing to tracking
-            progressBar.className = "progress-fill bg-rest"; progressBar.style.width = "0%";
-            
-            startClock();
+            updatePoolCount();
         }
 
-        // STEP 5: End Session
-        function endSession() {
-            if (timerState === "IDLE") return;
-            stopClock();
-            const now = Date.now();
-            document.getElementById("ratingModal").style.display = "none";
-            
-            if (currentBlock) {
-                currentBlock.endTime = now; currentBlock.durationSec = parseFloat(((now - currentBlock.startTime) / 1000).toFixed(2));
-                if (timerState === "WORK" || timerState === "RATING") currentBlock.status = "INTERRUPTED";
-                else currentBlock.status = "COMPLETED";
-                currentSession.blocks.push(currentBlock);
-            }
-
-            document.getElementById("sessionResultInput").value = "";
-            document.getElementById("sessionRatingModal").style.display = "flex";
+        function markDone() {
+            drawNextQuestion();
         }
-
-        function submitSessionRating() {
-            const resultsText = document.getElementById("sessionResultInput").value.trim() || "No specific results recorded.";
-            document.getElementById("sessionRatingModal").style.display = "none";
-            
-            currentSession.tangibleResults = resultsText;
-            saveSessionToHistory();
-
-            // Return to The Void
-            timerState = "IDLE"; activeTaskText = ""; sessionGoalText = ""; isAwaitingTask = false;
-            if (taskPromptTimeout) clearTimeout(taskPromptTimeout);
-
-            mainDisplay.style.opacity = "0";
-            modeLabel.style.opacity = "0";
-            progressWrapper.style.opacity = "0";
-            restBtn.style.opacity = "0";
-            startBtn.style.opacity = "0";
-            endBtn.style.opacity = "0";
-            settingsBtn.style.opacity = "0";
-            settingsPanel.style.display = "none";
-
-            setTimeout(() => {
-                restBtn.style.display = "none";
-                startBtn.style.display = "none";
-                endBtn.style.display = "none";
-                settingsBtn.style.display = "none";
-                editTaskBtn.style.display = "none";
-                
-                taskInput.style.display = "block";
-                inputGlow.style.display = "block";
-                taskInput.value = "";
-                taskInput.placeholder = "What problem are we solving?";
-                void taskInput.offsetWidth;
-                taskInput.style.opacity = "1";
-                taskInput.style.transform = "translate(-50%, -50%)";
-                taskInput.focus();
-                
-                statsLink.style.display = "inline-block";
-                
-            }, 400);
-            
-            document.title = "Focus & Rest";
-            ambientLight.style.background = "radial-gradient(circle, rgba(10, 132, 255, 0.15) 0%, transparent 60%)";
-        }
-
-        window.addEventListener('beforeunload', () => {
-            if (currentSession && timerState !== "IDLE") {
-                const now = Date.now();
-                if (currentBlock) {
-                    currentBlock.endTime = now; currentBlock.durationSec = parseFloat(((now - currentBlock.startTime) / 1000).toFixed(2));
-                    currentBlock.status = "ABANDONED"; currentSession.blocks.push(currentBlock);
-                }
-                currentSession.status = "ABANDONED"; saveSessionToHistory();
-            }
-        });
-
-        function startClock() {
-            stopClock();
-            clockInterval = setInterval(() => {
-                const elapsed = (Date.now() - currentStartTime) / 1000;
-                const formatted = formatTime(elapsed);
-                
-                if (timerState === "WORK") {
-                    if (!isAwaitingTask) document.title = `🛠 ${activeTaskText}`;
-                    else document.title = `🛠 Deep Work`;
-                }
-
-                if (timerState === "BREAK") {
-                    mainDisplay.innerText = formatted;
-                    document.title = `☕️ ${formatted} - Resting`;
-                    let fill = Math.min((elapsed / plannedBreakSec) * 100, 100);
-                    progressBar.style.width = `${fill}%`;
-
-                    if (elapsed >= plannedBreakSec && !alertShown) {
-                        alertShown = true; chime.play();
-                        modeLabel.innerText = "TIME UP • " + sessionGoalText; 
-                        mainDisplay.className = "main-display text-end"; progressBar.className = "progress-fill bg-end";
-                        ambientLight.style.background = "radial-gradient(circle, rgba(255, 69, 58, 0.15) 0%, transparent 60%)";
-                        setTimeout(() => alert(`Your earned break time is up! Ready to conquer the next problem?`), 100);
-                    }
-                }
-            }, 100);
-        }
-
-        function stopClock() { if (clockInterval) clearInterval(clockInterval); }
     </script>
 </body>
 </html>
